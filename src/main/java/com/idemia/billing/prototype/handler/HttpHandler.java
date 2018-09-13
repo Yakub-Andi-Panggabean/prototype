@@ -2,6 +2,9 @@ package com.idemia.billing.prototype.handler;
 
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.idemia.billing.prototype.domain.Credential;
 import com.idemia.billing.prototype.domain.User;
 import com.idemia.billing.prototype.service.AuthenticationService;
@@ -16,8 +19,12 @@ import io.vertx.ext.web.RoutingContext;
 
 public class HttpHandler {
 
+  private static final Logger LOG = LoggerFactory.getLogger(HttpHandler.class);
+
   private final String CONTENT_TYPE_HEADER = "content-type";
+  private final String AUTHORIZATION_HEADER = "Authorization";
   private final String HTML_CONTENT_TYPE = "";
+
 
 
   private final AuthenticationService authenticationService;
@@ -33,6 +40,10 @@ public class HttpHandler {
 
   public void handleRootContext(RoutingContext context) {
 
+    final HttpServerRequest request = context.request();
+
+    LOG.debug("incoming request {} from {}", request.path(), request.remoteAddress());
+
     context.response().putHeader(CONTENT_TYPE_HEADER, HTML_CONTENT_TYPE)
         .end("<h1>root context</h1>");
 
@@ -42,6 +53,10 @@ public class HttpHandler {
 
 
     final HttpServerRequest request = context.request();
+
+
+    // get authorization header
+    final String token = request.getHeader(AUTHORIZATION_HEADER);
 
     final Credential credential =
         new Credential(request.getParam("username"), request.getParam("password"));
@@ -75,6 +90,30 @@ public class HttpHandler {
 
 
     });
+
+  }
+
+
+  public void handleAuthenticationRequest(RoutingContext context) {
+
+    final HttpServerRequest request = context.request();
+
+    final Credential credential =
+        new Credential(request.getParam("username"), request.getParam("password"));
+
+    authenticationService.authenticate(credential, authenticated -> {
+
+
+
+      if (authenticated) {
+
+      }
+
+    }, err -> {
+
+    });
+
+
 
   }
 

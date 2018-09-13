@@ -26,10 +26,15 @@ vertx{
 }
 
 dependencies {
-    // This dependency is found on compile classpath of this component and consumers.
-    compile 'com.google.guava:guava:23.0'
+
+	//vertx for http handler
     compile 'io.vertx:vertx-web:3.5.3'
     
+    //vertx JWT provider
+    compile 'io.vertx:vertx-auth-jwt:3.5.3'
+    
+    //logging
+    compile 'ch.qos.logback:logback-classic:1.2.3'    
 
     // Use JUnit test framework
     testCompile 'junit:junit:4.12'

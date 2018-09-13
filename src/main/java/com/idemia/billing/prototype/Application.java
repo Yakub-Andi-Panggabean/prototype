@@ -29,6 +29,11 @@ public class Application extends AbstractVerticle {
 
   }
 
+  @Override
+  public void stop() throws Exception {
+    super.stop();
+  }
+
 
 
 }

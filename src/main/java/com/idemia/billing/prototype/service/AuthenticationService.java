@@ -1,9 +1,12 @@
 package com.idemia.billing.prototype.service;
 
+import java.util.function.Consumer;
+
 import com.idemia.billing.prototype.domain.Credential;
 
 public interface AuthenticationService {
 
-  boolean authenticate(Credential credential);
+  void authenticate(Credential credential, Consumer<Boolean> authenticated,
+      Consumer<Exception> error);
 
 }
