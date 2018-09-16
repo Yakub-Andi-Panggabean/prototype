@@ -8,6 +8,7 @@ import com.idemia.prototype.handler.HttpHandler;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.BodyHandler;
 
 
 /**
@@ -39,8 +40,9 @@ public class ServerVerticle extends AbstractVerticle {
     LOG.info("starting Http Server Verticle");
 
     final Router router = Router.router(vertx);
+    router.route().handler(BodyHandler.create());
 
-    final HttpHandler httpHandler = new HttpHandler();
+    final HttpHandler httpHandler = new HttpHandler(configuration);
 
     router.get("/").handler(httpHandler::handleRootContext);
     router.post(AUTHENTICATION_PATH).handler(httpHandler::handleAuthenticationRequest);

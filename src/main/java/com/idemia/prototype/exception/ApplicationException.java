@@ -2,30 +2,30 @@ package com.idemia.prototype.exception;
 
 import com.idemia.prototype.util.Errors;
 
-public class InvalidTokenException extends Exception {
+public class ApplicationException extends Exception {
 
   private static final long serialVersionUID = 8634045407976367951L;
 
   private Errors error;
 
-  public InvalidTokenException() {
+  public ApplicationException() {
     super();
   }
 
-  public InvalidTokenException(Errors error) {
+  public ApplicationException(Errors error) {
     super(error.toString());
     this.error = error;
   }
 
-  public InvalidTokenException(String message, Throwable cause) {
+  public ApplicationException(String message, Throwable cause) {
     super(message, cause);
   }
 
-  public InvalidTokenException(String message) {
+  public ApplicationException(String message) {
     super(message);
   }
 
-  public InvalidTokenException(Throwable cause) {
+  public ApplicationException(Throwable cause) {
     super(cause);
   }
 

@@ -4,20 +4,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.idemia.prototype.domain.Credential;
+import com.idemia.prototype.domain.JobSearch;
 import com.idemia.prototype.repository.bean.JobRepositoryBean;
 import com.idemia.prototype.service.AuthenticationService;
 import com.idemia.prototype.service.JobService;
 import com.idemia.prototype.service.TokenService;
-import com.idemia.prototype.service.UserService;
 import com.idemia.prototype.service.bean.AuthenticationServiceBean;
 import com.idemia.prototype.service.bean.JobServiceBean;
 import com.idemia.prototype.service.bean.TokenServiceBean;
-import com.idemia.prototype.service.bean.UserServiceBean;
 import com.idemia.prototype.util.BasicAuthEncoder;
 import com.idemia.prototype.util.Errors;
 
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
 public class HttpHandler {
@@ -30,14 +30,14 @@ public class HttpHandler {
   private final String JSON_CONTENT_TYPE = "application/json";
 
   private final AuthenticationService authenticationService;
-  private final UserService userService;
+  // private final UserService userService;
   private final TokenService tokenService;
   private final JobService jobService;
 
-  public HttpHandler() {
+  public HttpHandler(JsonObject configuration) {
     super();
-    authenticationService = new AuthenticationServiceBean();
-    userService = new UserServiceBean();
+    authenticationService = new AuthenticationServiceBean(configuration);
+    // userService = new UserServiceBean();
     tokenService = new TokenServiceBean();
     jobService = new JobServiceBean(new JobRepositoryBean());
   }
@@ -63,11 +63,14 @@ public class HttpHandler {
 
     tokenService.parseToken(token, claim -> {
 
-      // assume that all user is valid user
+      final JobSearch search = Json.decodeValue(context.getBodyAsString(), JobSearch.class);
 
-      jobService.displayJobs(null, res -> {
+      // assume that all user is valid user
+      jobService.displayJobs(search, res -> {
 
         context.response().putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE).end(Json.encode(res));
+
+
 
       }, err -> {
 
@@ -115,8 +118,7 @@ public class HttpHandler {
 
       } else {
 
-        final Credential credential =
-            new Credential(request.getParam(auth[0]), request.getParam(auth[1]));
+        final Credential credential = new Credential(auth[0], auth[1]);
 
         authenticationService.authenticate(credential, user -> {
 
@@ -143,7 +145,7 @@ public class HttpHandler {
         }, err -> {
 
           context.response().putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT_TYPE)
-              .end(Json.encode(Errors.INTERNAL_ERROR.error()));
+              .end(Json.encode(err.toError()));
 
         });
 

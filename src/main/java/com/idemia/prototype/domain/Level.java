@@ -2,11 +2,15 @@ package com.idemia.prototype.domain;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Level {
 
   private int id;
   private String name;
+  @JsonIgnore
   private LocalDateTime createdDateTime;
+  @JsonIgnore
   private LocalDateTime updatedDateTime;
 
   public Level() {

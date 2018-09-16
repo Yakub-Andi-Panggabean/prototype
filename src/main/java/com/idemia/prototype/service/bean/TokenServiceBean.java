@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 import javax.crypto.SecretKey;
 
 import com.idemia.prototype.domain.User;
-import com.idemia.prototype.exception.InvalidTokenException;
+import com.idemia.prototype.exception.ApplicationException;
 import com.idemia.prototype.service.TokenService;
 import com.idemia.prototype.util.Errors;
 
@@ -25,7 +25,7 @@ public class TokenServiceBean implements TokenService {
 
   private static final String ISSUER = "prototype-api";
 
-  final SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+  final static SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
   @Override
   public void generateToken(User user, Consumer<String> token, Consumer<Exception> err) {
@@ -55,7 +55,7 @@ public class TokenServiceBean implements TokenService {
 
   @Override
   public void parseToken(String token, Consumer<Claims> isValid,
-      Consumer<InvalidTokenException> err) {
+      Consumer<ApplicationException> err) {
 
     try {
 
@@ -70,13 +70,9 @@ public class TokenServiceBean implements TokenService {
       final LocalDateTime notBeforeDate = jws.getBody().getExpiration().toInstant()
           .atZone(ZoneId.systemDefault()).toLocalDateTime();
 
-      if (expirationDate.isAfter(LocalDateTime.now())) {
+      if (LocalDateTime.now().isAfter(expirationDate)) {
 
-        err.accept(new InvalidTokenException(Errors.EXPIRED_TOKEN_ERROR));
-
-      } else if (notBeforeDate.isBefore(LocalDateTime.now())) {
-
-        err.accept(new InvalidTokenException(Errors.NOT_BEFORE_TOKEN_ERROR));
+        err.accept(new ApplicationException(Errors.EXPIRED_TOKEN_ERROR));
 
       }
 
@@ -84,7 +80,7 @@ public class TokenServiceBean implements TokenService {
 
     } catch (final Exception ex) {
 
-      err.accept(new InvalidTokenException(ex));
+      err.accept(new ApplicationException(ex));
 
     }
 

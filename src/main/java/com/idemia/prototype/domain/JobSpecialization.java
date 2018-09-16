@@ -2,10 +2,14 @@ package com.idemia.prototype.domain;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class JobSpecialization {
 
   private String name;
+  @JsonIgnore
   private LocalDateTime createdDate;
+  @JsonIgnore
   private LocalDateTime updatedDate;
 
   public JobSpecialization() {
