@@ -21,10 +21,10 @@ plugins {
 
 //}
 
-mainClassName = "com.idemia.billing.prototype.Application"
+mainClassName = "com.idemia.prototype.Application"
 
 
-applicationDefaultJvmArgs = ["-Dconf.location=C:/Users/yakub-ganteng/Desktop/WORK/idemia/src/main/resources/application.properties"]
+applicationDefaultJvmArgs = ["-Dconf.location=src/main/resources/application.properties"]
 
 run {
     args = ["--myarg1", "--myarg2"]
